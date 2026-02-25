@@ -1,36 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.4.3</version>
+    <relativePath/>
+  </parent>
+
   <groupId>edu.neu</groupId>
-  <artifactId>mvc-adb-crud</artifactId>
+  <artifactId>mvc-crud</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>17</java.version>
   </properties>
 
   <dependencies>
-    <!-- Tomcat 10 uses jakarta.* -->
+    <!-- Spring Boot Web (embedded Tomcat + Spring MVC) -->
     <dependency>
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-      <version>6.0.0</version>
-      <scope>provided</scope>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
-    <!-- JSTL for JSP loops -->
+    <!-- Spring Boot JDBC (JdbcTemplate + DataSource auto-config) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
+    <!-- Redis caching -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+    <!-- Enable @Cacheable / @CacheEvict annotations -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-cache</artifactId>
+    </dependency>
+
+    <!-- JSP support in embedded Tomcat -->
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+    </dependency>
+
+    <!-- JSTL API -->
     <dependency>
       <groupId>jakarta.servlet.jsp.jstl</groupId>
       <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-      <version>3.0.0</version>
     </dependency>
+
+    <!-- JSTL implementation -->
     <dependency>
       <groupId>org.glassfish.web</groupId>
       <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-      <version>3.0.1</version>
     </dependency>
 
     <!-- Oracle JDBC -->
@@ -41,11 +70,25 @@
     </dependency>
 
     <!-- ADB wallet / TCPS support -->
-    <!-- UCP (usually pulls the needed security bits for TCPS/wallet setups) -->
     <dependency>
       <groupId>com.oracle.database.jdbc</groupId>
       <artifactId>ucp</artifactId>
       <version>23.5.0.24.07</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.oracle.database.security</groupId>
+      <artifactId>oraclepki</artifactId>
+      <version>23.5.0.24.07</version>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
