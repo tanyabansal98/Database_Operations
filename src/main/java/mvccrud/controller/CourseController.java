@@ -37,16 +37,10 @@ public class CourseController {
     }
 
     // POST /api/courses → create
-    // Spring deserializes JSON into a Course object automatically
     @PostMapping
     public ResponseEntity<?> createCourse(@RequestBody Course course) {
         try {
-            Course created = service.createCourse(
-                    course.getCourseCode(),
-                    course.getCourseName(),
-                    course.getCredits() > 0 ? course.getCredits() : 3,
-                    course.getInstructor(),
-                    course.getDepartment());
+            Course created = service.createCourse(course);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -60,12 +54,7 @@ public class CourseController {
     public ResponseEntity<?> updateCourse(@PathVariable long id,
             @RequestBody Course course) {
         try {
-            Course updated = service.updateCourse(id,
-                    course.getCourseCode(),
-                    course.getCourseName(),
-                    course.getCredits() > 0 ? course.getCredits() : 3,
-                    course.getInstructor(),
-                    course.getDepartment());
+            Course updated = service.updateCourse(id, course);
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

@@ -38,25 +38,10 @@ public class StudentController {
     }
 
     // POST /api/students → create
-    // Spring deserializes the JSON body into a Student object using @JsonProperty
-    // mappings
     @PostMapping
     public ResponseEntity<?> createStudent(@RequestBody Student student) {
         try {
-            service.createStudent(
-                    student.getFull_Name(),
-                    student.getEmail(),
-                    student.getPhone(),
-                    student.getDate_Of_Birth() != null ? student.getDate_Of_Birth().toString() : null,
-                    student.getMajor(),
-                    student.getStatus() != null ? student.getStatus() : "Active");
-            // Return the created student (find by email since Oracle doesn't return
-            // generated ID)
-            Student created = service.getAllStudents().stream()
-                    .filter(s -> student.getEmail() != null &&
-                            student.getEmail().equalsIgnoreCase(s.getEmail()))
-                    .findFirst()
-                    .orElse(null);
+            Student created = service.createStudent(student);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -70,14 +55,8 @@ public class StudentController {
     public ResponseEntity<?> updateStudent(@PathVariable long id,
             @RequestBody Student student) {
         try {
-            service.updateStudent(id,
-                    student.getFull_Name(),
-                    student.getEmail(),
-                    student.getPhone(),
-                    student.getDate_Of_Birth() != null ? student.getDate_Of_Birth().toString() : null,
-                    student.getMajor(),
-                    student.getStatus());
-            return ResponseEntity.ok(service.getStudentById(id));
+            Student updated = service.updateStudent(id, student);
+            return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (StudentNotFoundException e) {
