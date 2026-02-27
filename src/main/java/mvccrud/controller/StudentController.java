@@ -38,20 +38,23 @@ public class StudentController {
     }
 
     // POST /api/students → create
+    // Spring deserializes the JSON body into a Student object using @JsonProperty
+    // mappings
     @PostMapping
-    public ResponseEntity<?> createStudent(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> createStudent(@RequestBody Student student) {
         try {
             service.createStudent(
-                    body.get("fullName"),
-                    body.get("email"),
-                    body.get("phone"),
-                    body.get("dob"),
-                    body.get("major"),
-                    body.getOrDefault("status", "Active"));
-            // Return the created student (fetch by email since we don't get ID back)
+                    student.getFull_Name(),
+                    student.getEmail(),
+                    student.getPhone(),
+                    student.getDate_Of_Birth() != null ? student.getDate_Of_Birth().toString() : null,
+                    student.getMajor(),
+                    student.getStatus() != null ? student.getStatus() : "Active");
+            // Return the created student (find by email since Oracle doesn't return
+            // generated ID)
             Student created = service.getAllStudents().stream()
-                    .filter(s -> body.get("email") != null &&
-                            body.get("email").equalsIgnoreCase(s.getEmail()))
+                    .filter(s -> student.getEmail() != null &&
+                            student.getEmail().equalsIgnoreCase(s.getEmail()))
                     .findFirst()
                     .orElse(null);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -65,15 +68,15 @@ public class StudentController {
     // PUT /api/students/{id} → update
     @PutMapping("/{id}")
     public ResponseEntity<?> updateStudent(@PathVariable long id,
-            @RequestBody Map<String, String> body) {
+            @RequestBody Student student) {
         try {
             service.updateStudent(id,
-                    body.get("fullName"),
-                    body.get("email"),
-                    body.get("phone"),
-                    body.get("dob"),
-                    body.get("major"),
-                    body.get("status"));
+                    student.getFull_Name(),
+                    student.getEmail(),
+                    student.getPhone(),
+                    student.getDate_Of_Birth() != null ? student.getDate_Of_Birth().toString() : null,
+                    student.getMajor(),
+                    student.getStatus());
             return ResponseEntity.ok(service.getStudentById(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
